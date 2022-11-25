@@ -11,6 +11,7 @@ export class Home extends Component {
 		allPosts: [],
 		page: 0,
 		postsPerPage: 2,
+		searchValue: '',
 	}
 
 	componentDidMount() {
@@ -28,16 +29,44 @@ export class Home extends Component {
 	}
 
 	loadMorePosts = () => {
-		console.log('load more posts')
+		const { page, postsPerPage, allPosts, posts } = this.state
+
+		const nextPage = page + postsPerPage
+		const nextPosts = allPosts.slice(nextPage, nextPage + postsPerPage)
+		posts.push(...nextPosts)
+
+		this.setState({ posts, page: nextPage })
+	}
+
+	handleChange = (e) => {
+		const { value } = e.target
+		this.setState({ searchValue: value })
 	}
 
 	render() {
-		const { posts } = this.state
+		const { posts, page, postsPerPage, allPosts, searchValue } = this.state
+		const noMorePosts = page + postsPerPage >= allPosts.length
+
+		const filteredPosts = !!searchValue
+			? allPosts.filter((post) => {
+					return post.title.toLowerCase().includes(searchValue.toLowerCase())
+			  })
+			: posts
 
 		return (
 			<div className="container">
-				<Posts posts={posts} />
-				<Button text="Load" event={this.loadMorePosts}/>
+				{filteredPosts.length > 0 && (
+					<Posts searchValue={searchValue} handleChange={this.handleChange} />
+				)}
+				<div className="button-container">
+					{!searchValue && (
+						<Button
+							text="Load"
+							event={this.loadMorePosts}
+							disabled={noMorePosts}
+						/>
+					)}
+				</div>
 			</div>
 		)
 	}

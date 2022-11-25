@@ -12,3 +12,4 @@ export const Posts = ({ posts }) => {
 	</div>
 	)
 }
+import './styles.css'
