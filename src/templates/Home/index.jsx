@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { Button } from '../../components/Button'
+import { Input } from '../../components/Input'
 import { Posts } from '../../components/Posts'
 import { loadPosts } from '../../utils/load-posts'
 import './styles.css'
@@ -10,7 +11,7 @@ export class Home extends Component {
 		posts: [],
 		allPosts: [],
 		page: 0,
-		postsPerPage: 2,
+		postsPerPage: 10,
 		searchValue: '',
 	}
 
@@ -35,12 +36,12 @@ export class Home extends Component {
 		const nextPosts = allPosts.slice(nextPage, nextPage + postsPerPage)
 		posts.push(...nextPosts)
 
-		this.setState({ posts, page: nextPage })
+		this.setState({ ...this.setState, posts, page: nextPage })
 	}
 
 	handleChange = (e) => {
 		const { value } = e.target
-		this.setState({ searchValue: value })
+		this.setState({ ...this.setState, searchValue: value })
 	}
 
 	render() {
@@ -55,8 +56,13 @@ export class Home extends Component {
 
 		return (
 			<div className="container">
+				<Input searchValue={searchValue} handleChange={this.handleChange} />
 				{filteredPosts.length > 0 && (
-					<Posts searchValue={searchValue} handleChange={this.handleChange} />
+					<Posts
+						posts={filteredPosts}
+						searchValue={searchValue}
+						handleChange={this.handleChange}
+					/>
 				)}
 				<div className="button-container">
 					{!searchValue && (
